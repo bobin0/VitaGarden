@@ -1,203 +1,142 @@
 "use client";
-
-import { useState } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
-import { X, ArrowLeftRight } from "lucide-react";
-import { FadeIn, SectionLabel, SectionHeading } from "./ui";
-
-const BEFORE_AFTER = [
-  {
-    before: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=75",
-    after:  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=75",
-    label: "Trávnik — pred a po kosení",
-    tag: "Kosenie",
-  },
-  {
-    before: "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=700&q=75",
-    after:  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=700&q=75",
-    label: "Živý plot — pred a po strihani",
-    tag: "Ploty",
-  },
-  {
-    before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=75",
-    after:  "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=700&q=75",
-    label: "Záhon — pred a po výsadbe",
-    tag: "Výsadba",
-  },
-];
+import { X } from "lucide-react";
 
 const GRID = [
-  { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75", label: "Záhrada po jarnom upratovaní" },
-  { src: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=75", label: "Tvarovaný živý plot" },
-  { src: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600&q=75", label: "Výsadba kvetov a trvaliek" },
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=75", label: "Dokonale skosený trávnik" },
+  { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&q=75", label: "Jarné upratovanie" },
+  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=75", label: "Kosenie trávnika" },
+  { src: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=500&q=75", label: "Výsadba kvetov" },
+  { src: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500&q=75", label: "Záhradné práce" },
 ];
 
-function BeforeAfterCard({
-  item,
-  onClick,
-}: {
-  item: (typeof BEFORE_AFTER)[0];
-  onClick: () => void;
-}) {
-  const [hover, setHover] = useState(false);
-
-  return (
-    <div
-      className="relative rounded-3xl overflow-hidden cursor-pointer group aspect-[4/3]"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onClick={onClick}
-    >
-      {/* After image (always visible) */}
-      <Image src={item.after} alt={`Po: ${item.label}`} fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
-
-      {/* Before overlay (slides in on hover) */}
-      <motion.div
-        animate={{ clipPath: hover ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute inset-0"
-      >
-        <Image src={item.before} alt={`Pred: ${item.label}`} fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
-        <div className="absolute inset-0 bg-forest-950/20" />
-        <div className="absolute bottom-3 left-3 bg-white/90 text-forest-800 text-xs font-semibold font-body px-3 py-1.5 rounded-full">
-          PRED
-        </div>
-      </motion.div>
-
-      {/* Divider line */}
-      <motion.div
-        animate={{ left: hover ? "50%" : "100%" }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-0 bottom-0 w-0.5 bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.5)] z-10"
-      />
-
-      {/* After label */}
-      {!hover && (
-        <div className="absolute bottom-3 right-3 bg-leaf-500/90 text-white text-xs font-semibold font-body px-3 py-1.5 rounded-full">
-          PO
-        </div>
-      )}
-
-      {/* Tag */}
-      <div className="absolute top-3 left-3 bg-forest-800/80 backdrop-blur-sm text-cream-100 text-xs font-body px-3 py-1.5 rounded-full">
-        {item.tag}
-      </div>
-
-      {/* Hover icon */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-          <ArrowLeftRight className="w-5 h-5 text-white" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Gallery() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  const [lightbox, setLightbox] = useState<null | { src: string; label: string }>(null);
+  const [pct, setPct] = useState(50);
+  const dragging = useRef(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  const calcPct = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    if (!wrapRef.current) return;
+    const r = wrapRef.current.getBoundingClientRect();
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    setPct(Math.max(3, Math.min(97, ((clientX - r.left) / r.width) * 100)));
+  }, []);
 
   return (
-    <section id="galeria" ref={ref} className="py-28 bg-cream-100">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8">
-        {/* Header */}
-        <FadeIn className="text-center mb-16">
-          <SectionLabel>Galéria realizácií</SectionLabel>
-          <SectionHeading className="text-4xl lg:text-5xl mb-4">
-            Výsledky hovoria{" "}
-            <span className="text-leaf-500">za seba</span>
-          </SectionHeading>
-          <p className="font-body text-forest-600 text-lg max-w-xl mx-auto mt-4">
-            Najezte sa pohľadom na naše realizácie. Ukážeme vám rozdiel pred a po —
-            rovnako to dokážeme aj vo vašej záhrade.
-          </p>
-        </FadeIn>
+    <section id="gallery" className="relative z-20 bg-[#060d08] py-28">
+      <div className="max-w-[1200px] mx-auto px-5 sm:px-10">
 
-        {/* Before/After cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-5">
-          {BEFORE_AFTER.map((item, i) => (
-            <motion.div
-              key={item.label}
-              initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-            >
-              <BeforeAfterCard
-                item={item}
-                onClick={() => setLightbox({ src: item.after, label: item.label })}
-              />
-              <p className="text-center text-xs text-forest-500 font-body mt-2.5">
-                {item.label}
-              </p>
-            </motion.div>
-          ))}
+        {/* Header */}
+        <div className="vg-reveal mb-16">
+          <div className="flex items-center gap-2.5 mb-4">
+            <span className="block w-5 h-px bg-[#4a9e70]" />
+            <span className="text-[#4a9e70] text-[11px] font-semibold tracking-[.2em] uppercase">Galéria realizácií</span>
+          </div>
+          <h2 className="font-display font-extrabold text-[#f0ede6] leading-[1.0] tracking-[-2px]" style={{ fontSize: "clamp(36px,5vw,72px)" }}>
+            Výsledky hovoria
+            <br />
+            <span className="text-[rgba(240,237,230,.2)]">za seba</span>
+          </h2>
         </div>
 
-        {/* Additional grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-8">
+        {/* B/A Slider */}
+        <div className="vg-reveal mb-3">
+          <div
+            ref={wrapRef}
+            className="relative overflow-hidden rounded-[24px] select-none"
+            style={{ aspectRatio: "21/9", cursor: "col-resize" }}
+            onMouseDown={(e) => { dragging.current = true; calcPct(e); }}
+            onMouseMove={(e) => { if (dragging.current) calcPct(e); }}
+            onMouseUp={() => { dragging.current = false; }}
+            onMouseLeave={() => { dragging.current = false; }}
+            onTouchStart={(e) => { dragging.current = true; calcPct(e); }}
+            onTouchMove={(e) => { if (dragging.current) calcPct(e); }}
+            onTouchEnd={() => { dragging.current = false; }}
+          >
+            {/* After */}
+            <Image
+              src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1400&q=80"
+              alt="Po"
+              fill
+              className="object-cover"
+              draggable={false}
+            />
+            {/* Before — clipped */}
+            <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
+              <Image
+                src="https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=1400&q=80"
+                alt="Pred"
+                fill
+                className="object-cover"
+                draggable={false}
+              />
+            </div>
+            {/* Divider line */}
+            <div
+              className="absolute top-0 bottom-0 w-0.5 z-10 pointer-events-none"
+              style={{ left: `${pct}%`, background: "linear-gradient(to bottom, transparent, #4a9e70, transparent)", boxShadow: "0 0 20px rgba(74,158,112,.7)" }}
+            />
+            {/* Handle */}
+            <div
+              className="absolute top-1/2 z-20 -translate-y-1/2 w-12 h-12 bg-[#4a9e70] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(74,158,112,.6)] pointer-events-none"
+              style={{ left: `${pct}%`, transform: `translate(-50%, -50%)` }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#060d08" strokeWidth="2.5">
+                <path d="m7 16-4-4 4-4"/><path d="m17 8 4 4-4 4"/>
+              </svg>
+            </div>
+            {/* Labels */}
+            <div className="absolute bottom-4 left-4 bg-[rgba(6,13,8,.75)] backdrop-blur-sm border border-[rgba(240,237,230,.1)] text-[#f0ede6] text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-[.08em] pointer-events-none">Pred</div>
+            <div className="absolute bottom-4 right-4 bg-[rgba(74,158,112,.8)] backdrop-blur-sm text-[#060d08] text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-[.08em] pointer-events-none">Po</div>
+          </div>
+          <p className="text-center text-[11px] text-[rgba(240,237,230,.2)] tracking-[.08em] mt-3 uppercase">↔ Potiahnite posuvník</p>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-10">
           {GRID.map((g, i) => (
-            <motion.div
+            <div
               key={g.src}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: 0.3 + i * 0.07 }}
-              className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer"
-              onClick={() => setLightbox(g)}
+              className={`vg-reveal vg-d${(i + 1) as 1|2|3|4} group relative rounded-[18px] overflow-hidden aspect-square cursor-none`}
+              onClick={() => setLightbox(g.src)}
             >
               <Image
                 src={g.src}
                 alt={g.label}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width:640px) 50vw, 25vw"
+                className="object-cover group-hover:scale-[1.08] transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-forest-950/0 group-hover:bg-forest-950/30 transition-colors duration-300 flex items-end p-3">
-                <span className="text-white text-xs font-body font-medium opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+              <div className="absolute inset-0 bg-[rgba(6,13,8,0)] group-hover:bg-[rgba(6,13,8,.35)] transition-colors duration-300 flex items-end p-3.5">
+                <span className="text-white text-[12px] font-semibold opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                   {g.label}
                 </span>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
 
       {/* Lightbox */}
-      <AnimatePresence>
-        {lightbox && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-forest-950/95 backdrop-blur-sm flex items-center justify-center p-4"
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[200] bg-[rgba(6,13,8,.96)] backdrop-blur-sm flex items-center justify-center p-6"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            className="absolute top-5 right-5 w-10 h-10 bg-[rgba(240,237,230,.1)] hover:bg-[rgba(240,237,230,.2)] rounded-full flex items-center justify-center text-[#f0ede6] transition-colors cursor-none"
             onClick={() => setLightbox(null)}
           >
-            <button
-              onClick={() => setLightbox(null)}
-              className="absolute top-5 right-5 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer"
-              aria-label="Zavrieť"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="max-w-4xl w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative aspect-video rounded-3xl overflow-hidden">
-                <Image src={lightbox.src} alt={lightbox.label} fill className="object-cover" />
-              </div>
-              <p className="text-cream-300 text-sm font-body text-center mt-4">{lightbox.label}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <X className="w-5 h-5" />
+          </button>
+          <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="relative aspect-video rounded-[20px] overflow-hidden">
+              <Image src={lightbox} alt="" fill className="object-cover" />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,118 +1,106 @@
 "use client";
-
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { ShieldCheck, Clock, Sparkles, BadgeEuro } from "lucide-react";
-import { FadeIn, SectionLabel, SectionHeading } from "./ui";
+import { ShieldCheck, Sparkles, Clock, BadgeEuro } from "lucide-react";
 
 const REASONS = [
-  {
-    icon: ShieldCheck,
-    title: "Spoľahlivosť",
-    desc: "Prídeme v dohodnutom čase, odvedieme prácu načas a zanecháme záhradu v bezchybnom stave. Žiadne prekvapenia.",
-  },
-  {
-    icon: Sparkles,
-    title: "Kvalitná práca",
-    desc: "Používame profesionálne náradia a overené postupy. Výsledok vždy prekračuje očakávania zákazníka.",
-  },
-  {
-    icon: Clock,
-    title: "Individuálny prístup",
-    desc: "Každá záhrada je iná. Vždy nájdeme riešenie šité na mieru — bez šablón, len výsledky.",
-  },
-  {
-    icon: BadgeEuro,
-    title: "Férové ceny",
-    desc: "Transparentná cenotvorba bez skrytých poplatkov. Cenovú ponuku dostanete vopred a bez záväzkov.",
-  },
+  { icon: ShieldCheck, title: "Spoľahlivosť",        desc: "Vždy načas, vždy v poriadku. Bez prekvapení." },
+  { icon: Sparkles,    title: "Prémiová kvalita",     desc: "Výsledok vždy prekračuje očakávania zákazníka." },
+  { icon: Clock,       title: "Individuálny prístup", desc: "Každá záhrada je iná — riešenie šité na mieru." },
+  { icon: BadgeEuro,   title: "Férové ceny",          desc: "Transparentná cena, žiadne skryté poplatky." },
 ];
 
 export default function WhyUs() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
   return (
-    <section id="preco-my" ref={ref} className="py-28 bg-forest-950 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: image */}
-          <FadeIn direction="left">
+    <section id="why" className="relative z-20 bg-[#060d08] py-28 overflow-hidden">
+      {/* BG parallax photo */}
+      <div className="absolute inset-0 opacity-[.08] pointer-events-none">
+        <Image
+          src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1800&q=60"
+          alt=""
+          fill
+          className="object-cover"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#060d08] via-[rgba(6,13,8,.7)] to-[#060d08]" />
+
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 sm:px-10">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+
+          {/* Photo side */}
+          <div className="vg-reveal-l">
             <div className="relative">
-              {/* Main image */}
-              <div className="relative aspect-[4/5] rounded-4xl overflow-hidden">
+              {/* Main */}
+              <div className="relative rounded-[28px] overflow-hidden" style={{ aspectRatio: "3/4" }}>
                 <Image
-                  src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80"
-                  alt="Záhradník pri práci"
+                  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80"
+                  alt="Záhradník"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(max-width:1024px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(6,13,8,.6)] to-transparent" />
               </div>
 
-              {/* Floating card — years */}
-              <motion.div
-                initial={{ opacity: 0, x: -20, y: 20 }}
-                animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
-                transition={{ delay: 0.45, duration: 0.6 }}
-                className="absolute -bottom-6 -left-6 bg-leaf-500 rounded-3xl px-7 py-5 shadow-2xl"
-              >
-                <div className="font-display font-bold text-white text-4xl leading-none">8+</div>
-                <div className="text-white/80 text-sm font-body mt-1">rokov skúseností</div>
-              </motion.div>
+              {/* Badge years */}
+              <div className="absolute -bottom-5 -left-5 bg-[#4a9e70] rounded-[20px] px-7 py-5 shadow-[0_20px_60px_rgba(74,158,112,.4)]">
+                <div className="font-display font-extrabold text-[#060d08] text-[44px] leading-none">8+</div>
+                <div className="text-[rgba(6,13,8,.65)] text-[12px] font-semibold mt-1">rokov skúseností</div>
+              </div>
 
-              {/* Floating card — projects */}
-              <motion.div
-                initial={{ opacity: 0, x: 20, y: -20 }}
-                animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
-                transition={{ delay: 0.55, duration: 0.6 }}
-                className="absolute -top-4 -right-4 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl px-5 py-4"
-              >
-                <div className="font-display font-bold text-cream-50 text-2xl">200+</div>
-                <div className="text-cream-400 text-xs font-body">projektov ročne</div>
-              </motion.div>
+              {/* Badge projects */}
+              <div className="absolute -top-4 -right-4 bg-[rgba(10,24,16,.9)] backdrop-blur-xl border border-[rgba(74,158,112,.2)] rounded-[18px] px-5 py-4">
+                <div className="font-display font-extrabold text-[#f0ede6] text-[28px] leading-none">200+</div>
+                <div className="text-[rgba(240,237,230,.35)] text-[11px] mt-1">projektov ročne</div>
+              </div>
 
-              {/* Corner decoration */}
-              <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-leaf-500/40 rounded-tl-3xl pointer-events-none" />
+              {/* Corner deco */}
+              <div className="absolute -top-3 -left-3 w-14 h-14 border-t-2 border-l-2 border-[rgba(74,158,112,.35)] rounded-tl-[20px] pointer-events-none" />
             </div>
-          </FadeIn>
+          </div>
 
-          {/* Right: text */}
-          <FadeIn direction="right" delay={0.15}>
-            <SectionLabel>Prečo VitaGarden</SectionLabel>
-            <SectionHeading className="text-4xl lg:text-5xl text-cream-50 mb-6">
+          {/* Text side */}
+          <div className="vg-reveal-r">
+            <div className="flex items-center gap-2.5 mb-4">
+              <span className="block w-5 h-px bg-[#4a9e70]" />
+              <span className="text-[#4a9e70] text-[11px] font-semibold tracking-[.2em] uppercase">Prečo VitaGarden</span>
+            </div>
+
+            <h2 className="font-display font-extrabold text-[#f0ede6] leading-[1.05] tracking-[-2px] mb-6" style={{ fontSize: "clamp(32px,4vw,58px)" }}>
               Záhrade sa venujeme{" "}
-              <span className="text-leaf-400">s vášňou</span>
-            </SectionHeading>
-            <p className="font-body text-cream-400 text-base leading-relaxed mb-10">
-              Nie sme len záhradníci. Sme ľudia, ktorí milujú prírodu a chcú,
-              aby vaša záhrada bola miestom odpočinku a krásy — bez toho, aby ste
-              museli stráviť víkend s grabľami v ruke.
+              <span className="vg-gradient-text">s vášňou</span>
+            </h2>
+
+            <p className="text-[rgba(240,237,230,.45)] text-[16px] leading-[1.75] mb-12 max-w-[400px]">
+              Chceme, aby vaša záhrada bola miestom krásy a oddychu — bez toho,
+              aby ste trávili víkend s grabľami v ruke.
             </p>
 
-            {/* Reasons */}
-            <div className="grid sm:grid-cols-2 gap-5">
-              {REASONS.map((r, i) => (
-                <motion.div
+            <div className="grid grid-cols-2 gap-4">
+              {REASONS.map((r) => (
+                <div
                   key={r.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-                  className="bg-white/5 border border-white/8 rounded-2xl p-5 hover:border-leaf-500/30 hover:bg-white/8 transition-all"
+                  className="group bg-[rgba(240,237,230,.04)] border border-[rgba(240,237,230,.07)] rounded-[20px] p-5 hover:border-[rgba(74,158,112,.3)] hover:bg-[rgba(74,158,112,.05)] transition-all duration-300 tilt-card"
+                  style={{ transformStyle: "preserve-3d" }}
+                  onMouseMove={(e) => {
+                    const el = e.currentTarget;
+                    const r2 = el.getBoundingClientRect();
+                    const x = ((e.clientX - r2.left) / r2.width  - .5) * 12;
+                    const y = ((e.clientY - r2.top)  / r2.height - .5) * 12;
+                    el.style.transform = `perspective(600px) rotateY(${x}deg) rotateX(${-y}deg) translateZ(8px)`;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "";
+                  }}
                 >
-                  <div className="w-9 h-9 bg-leaf-500/15 rounded-xl flex items-center justify-center mb-3">
-                    <r.icon className="w-4.5 h-4.5 text-leaf-400 w-[18px] h-[18px]" strokeWidth={1.8} />
+                  <div className="w-9 h-9 bg-[rgba(74,158,112,.12)] rounded-xl flex items-center justify-center mb-3">
+                    <r.icon className="w-[17px] h-[17px] text-[#4a9e70]" strokeWidth={1.8} />
                   </div>
-                  <div className="font-display font-bold text-cream-100 text-base mb-1.5">
-                    {r.title}
-                  </div>
-                  <p className="font-body text-cream-500 text-xs leading-relaxed">{r.desc}</p>
-                </motion.div>
+                  <div className="font-display font-bold text-[#f0ede6] text-[15px] mb-1.5">{r.title}</div>
+                  <div className="text-[rgba(240,237,230,.4)] text-[12px] leading-relaxed">{r.desc}</div>
+                </div>
               ))}
             </div>
-          </FadeIn>
+          </div>
         </div>
       </div>
     </section>

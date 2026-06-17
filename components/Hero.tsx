@@ -1,154 +1,147 @@
 "use client";
+import dynamic from "next/dynamic";
+import { Phone, ArrowRight, CheckCircle } from "lucide-react";
 
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { Phone, ArrowRight, Star, CheckCircle } from "lucide-react";
+const WebGLScene = dynamic(() => import("./WebGLScene"), { ssr: false });
 
-const TRUST = [
-  "Bez záväzkov",
-  "Bezplatná konzultácia",
-  "Odpoveď do 2 hodín",
-];
+const TRUST = ["Bez záväzkov", "Bezplatná konzultácia", "Odpoveď do 2 hodín"];
 
 export default function Hero() {
-  const goContact = () =>
-    document.querySelector("#kontakt")?.scrollIntoView({ behavior: "smooth" });
+  const go = (id: string) =>
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-forest-950">
-      {/* BG image */}
-      <div className="absolute inset-0">
-        <Image
-          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=85"
-          alt="Krásna záhrada"
-          fill
-          priority
-          className="object-cover object-center opacity-35"
-          sizes="100vw"
-        />
-        {/* gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-forest-950/95 via-forest-900/80 to-forest-800/50" />
-        {/* subtle pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-      </div>
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Three.js canvas */}
+      <WebGLScene />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-5 sm:px-8 pt-28 pb-20 w-full">
-        <div className="max-w-2xl">
-          {/* Rating badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="inline-flex items-center gap-2 bg-white/8 backdrop-blur-sm border border-white/12 rounded-full px-4 py-2 mb-8"
+      {/* Grain overlay */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none opacity-[.035]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
+
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 sm:px-10 pt-40 pb-24 w-full">
+        <div className="max-w-[680px]">
+          {/* Eyebrow */}
+          <div
+            className="inline-flex items-center gap-2.5 mb-8 opacity-0 animate-[fadeUp_.8s_cubic-bezier(.22,1,.36,1)_.15s_forwards]"
+            style={{ animation: "fadeUp .8s cubic-bezier(.22,1,.36,1) .15s forwards" }}
           >
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3 h-3 text-earth-400 fill-earth-400" />
-              ))}
-            </div>
-            <span className="text-cream-200 text-xs font-medium font-body">
-              Hodnotenie 5.0 · 200+ spokojných zákazníkov
+            <span className="block w-6 h-px bg-[#4a9e70]" />
+            <span className="text-[#4a9e70] text-[11px] font-semibold tracking-[.2em] uppercase">
+              Profesionálna záhradná starostlivosť
             </span>
-          </motion.div>
+          </div>
 
           {/* H1 */}
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-bold text-cream-50 text-5xl sm:text-6xl lg:text-7xl leading-[1.04] tracking-tight mb-6"
+          <h1
+            className="font-display font-extrabold leading-[.95] tracking-[-4px] text-[#f0ede6] mb-8 opacity-0"
+            style={{
+              fontSize: "clamp(60px,8.5vw,120px)",
+              animation: "fadeUp .9s cubic-bezier(.22,1,.36,1) .3s forwards",
+            }}
           >
-            Záhrada,{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-leaf-300 to-leaf-500">
-              ktorá dýcha
-            </span>
+            Vaša záhrada
             <br />
-            každou sezónou
-          </motion.h1>
+            <em className="not-italic font-bold" style={{
+              WebkitTextStroke: "1px #4a9e70",
+              color: "transparent",
+            }}>
+              dokonalá
+            </em>
+            <br />
+            <span className="vg-gradient-text">každý deň</span>
+          </h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.35 }}
-            className="font-body text-lg text-cream-300 leading-relaxed mb-10 max-w-lg"
+          {/* Sub */}
+          <p
+            className="text-lg text-[rgba(240,237,230,.5)] leading-[1.75] max-w-[440px] mb-12 opacity-0"
+            style={{ animation: "fadeUp .8s cubic-bezier(.22,1,.36,1) .5s forwards" }}
           >
-            Profesionálna starostlivosť o záhrady pre rodinné domy, firmy a
-            správcov nehnuteľností. Kosenie, ploty, výsadba — všetko pod jednou
-            strechou.
-          </motion.p>
+            Kosenie, ploty, výsadba a kompletná údržba záhrad pre rodinné domy
+            a firmy na celom Slovensku.
+          </p>
 
           {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-3 mb-10"
+          <div
+            className="flex flex-wrap gap-4 mb-12 opacity-0"
+            style={{ animation: "fadeUp .8s cubic-bezier(.22,1,.36,1) .65s forwards" }}
           >
             <a
               href="tel:+421900000000"
-              className="group inline-flex items-center justify-center gap-2.5 bg-leaf-500 hover:bg-leaf-400 text-white font-semibold font-body text-base px-7 py-4 rounded-2xl transition-all duration-200 cursor-pointer shadow-lg shadow-leaf-500/25 hover:shadow-leaf-400/30 hover:shadow-xl"
+              data-hover
+              className="inline-flex items-center gap-2.5 bg-[#4a9e70] hover:bg-[#86c99a] text-[#060d08] font-display font-bold text-[15px] px-8 py-4 rounded-xl transition-all duration-300 shadow-[0_0_40px_rgba(74,158,112,.3)] hover:shadow-[0_0_60px_rgba(74,158,112,.5)] hover:-translate-y-0.5"
             >
-              <Phone className="w-4.5 h-4.5 w-[18px] h-[18px]" />
+              <Phone className="w-4 h-4" />
               Zavolať teraz
             </a>
             <button
-              onClick={goContact}
-              className="group inline-flex items-center justify-center gap-2 border border-white/20 hover:border-white/40 text-cream-100 hover:text-white font-semibold font-body text-base px-7 py-4 rounded-2xl transition-all duration-200 cursor-pointer hover:bg-white/5"
+              onClick={() => go("#contact")}
+              data-hover
+              className="inline-flex items-center gap-2 border border-[rgba(240,237,230,.15)] hover:border-[rgba(74,158,112,.4)] text-[rgba(240,237,230,.8)] hover:text-[#f0ede6] font-display font-semibold text-[15px] px-8 py-4 rounded-xl transition-all duration-300 hover:bg-[rgba(74,158,112,.05)]"
             >
-              Nezáväzná cenová ponuka
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              Cenová ponuka zadarmo
+              <ArrowRight className="w-4 h-4" />
             </button>
-          </motion.div>
+          </div>
 
-          {/* Trust signals */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-wrap gap-x-5 gap-y-2"
+          {/* Trust */}
+          <div
+            className="flex flex-wrap gap-5 opacity-0"
+            style={{ animation: "fadeUp .8s cubic-bezier(.22,1,.36,1) .8s forwards" }}
           >
             {TRUST.map((t) => (
-              <div key={t} className="flex items-center gap-1.5 text-cream-400 text-sm font-body">
-                <CheckCircle className="w-3.5 h-3.5 text-leaf-400 flex-shrink-0" />
+              <div key={t} className="flex items-center gap-1.5 text-[rgba(240,237,230,.4)] text-[13px]">
+                <CheckCircle className="w-3.5 h-3.5 text-[#4a9e70] flex-shrink-0" />
                 {t}
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* Floating stats card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92, x: 30 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.75, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="hidden lg:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col gap-4"
+        {/* Stats — right */}
+        <div
+          className="hidden lg:flex absolute right-10 top-1/2 -translate-y-1/2 flex-col gap-px opacity-0"
+          style={{ animation: "fadeUp .8s cubic-bezier(.22,1,.36,1) .9s forwards" }}
         >
           {[
-            { val: "200+", label: "Zákazníkov" },
-            { val: "8+",   label: "Rokov praxe" },
-            { val: "98%",  label: "Spokojnosť" },
-          ].map((s) => (
+            { v: "200+", l: "Zákazníkov" },
+            { v: "8+",   l: "Rokov praxe" },
+            { v: "98%",  l: "Spokojnosť" },
+          ].map((s, i) => (
             <div
-              key={s.label}
-              className="bg-white/8 backdrop-blur-md border border-white/12 rounded-2xl px-6 py-4 text-center min-w-[120px]"
+              key={s.l}
+              className="px-7 py-5 border border-[rgba(240,237,230,.07)] bg-[rgba(6,13,8,.55)] backdrop-blur-md text-center min-w-[120px]"
+              style={{
+                borderRadius: i === 0 ? "16px 16px 0 0" : i === 2 ? "0 0 16px 16px" : "0",
+              }}
             >
-              <div className="font-display font-bold text-cream-50 text-3xl">{s.val}</div>
-              <div className="text-cream-400 text-xs font-body mt-0.5">{s.label}</div>
+              <div className="font-display font-extrabold text-[36px] text-[#f0ede6] leading-none">
+                {s.v.replace(/\d+/, (n) => n)
+                  .split(/(\d+)/)
+                  .map((p, j) =>
+                    /\d/.test(p) ? <span key={j}>{p}</span> : <span key={j} className="text-[#4a9e70]">{p}</span>
+                  )}
+              </div>
+              <div className="text-[11px] text-[rgba(240,237,230,.35)] mt-1 tracking-[.06em]">{s.l.toUpperCase()}</div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-cream-100 to-transparent" />
+      {/* Bottom gradient fade into next section */}
+      <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#060d08] to-transparent z-10 pointer-events-none" />
+
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity:0; transform:translateY(30px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,124 +1,64 @@
 "use client";
-
-import { Leaf, Phone, Mail, Facebook, Instagram } from "lucide-react";
+import { Leaf, Phone, Mail } from "lucide-react";
 
 const LINKS = [
-  { label: "Kosenie trávnikov",     href: "#sluzby" },
-  { label: "Strihanie plotov",      href: "#sluzby" },
-  { label: "Údržba záhrad",         href: "#sluzby" },
-  { label: "Výsadba rastlín",       href: "#sluzby" },
-  { label: "Jarné/jesenné práce",   href: "#sluzby" },
+  { label: "Služby",   href: "#services" },
+  { label: "O nás",    href: "#why" },
+  { label: "Galéria",  href: "#gallery" },
+  { label: "Kontakt",  href: "#contact" },
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const go = (href: string) => {
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-forest-950 border-t border-white/5">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-14">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 bg-forest-700 rounded-xl flex items-center justify-center">
-                <Leaf className="w-[18px] h-[18px] text-cream-100" />
-              </div>
-              <span className="font-display font-bold text-cream-100 text-lg">
-                Vita<span className="text-leaf-400">Garden</span>
-              </span>
+    <footer className="relative z-20 bg-[#040a06] border-t border-[rgba(240,237,230,.04)] py-10">
+      <div className="max-w-[1200px] mx-auto px-5 sm:px-10">
+        <div className="flex flex-wrap items-center justify-between gap-6 pb-8 mb-8 border-b border-[rgba(240,237,230,.05)]">
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#2d5a3d] to-[#4a9e70] rounded-[9px] flex items-center justify-center">
+              <Leaf className="w-4 h-4 text-[#f0ede6]" />
             </div>
-            <p className="font-body text-cream-500 text-sm leading-relaxed max-w-xs mb-6">
-              Profesionálna záhradnícka firma pre rodinné domy, firmy a správcov
-              nehnuteľností na celom Slovensku.
-            </p>
-            <div className="space-y-2.5">
-              <a href="tel:+421900000000" className="flex items-center gap-2.5 text-cream-400 hover:text-leaf-400 text-sm font-body transition-colors cursor-pointer">
-                <Phone className="w-3.5 h-3.5 text-leaf-500 flex-shrink-0" />
-                +421 900 000 000
-              </a>
-              <a href="mailto:info@vitagarden.sk" className="flex items-center gap-2.5 text-cream-400 hover:text-leaf-400 text-sm font-body transition-colors cursor-pointer">
-                <Mail className="w-3.5 h-3.5 text-leaf-500 flex-shrink-0" />
-                info@vitagarden.sk
-              </a>
-            </div>
+            <span className="font-display font-extrabold text-[#f0ede6] text-[17px]">
+              Vita<span className="text-[#4a9e70]">Garden</span>
+            </span>
           </div>
 
-          {/* Services */}
-          <div>
-            <h4 className="font-display font-bold text-cream-200 text-sm mb-4 tracking-wide">
-              Služby
-            </h4>
-            <ul className="space-y-2.5">
-              {LINKS.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.querySelector(l.href)?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="font-body text-cream-500 hover:text-leaf-400 text-sm transition-colors cursor-pointer"
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social + CTA */}
-          <div>
-            <h4 className="font-display font-bold text-cream-200 text-sm mb-4 tracking-wide">
-              Sledujte nás
-            </h4>
-            <div className="flex gap-2 mb-7">
-              {[
-                { icon: Facebook,  label: "Facebook" },
-                { icon: Instagram, label: "Instagram" },
-              ].map(({ icon: Icon, label }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  className="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-leaf-500/20 hover:border-leaf-500/40 transition-all cursor-pointer"
-                >
-                  <Icon className="w-4 h-4 text-cream-400" />
-                </a>
-              ))}
-            </div>
-
-            <div className="bg-leaf-500/10 border border-leaf-500/20 rounded-2xl p-4">
-              <div className="font-display font-bold text-cream-100 text-sm mb-1">
-                Bezplatná konzultácia
-              </div>
-              <div className="font-body text-cream-500 text-xs mb-3">
-                Zavolajte alebo napíšte
-              </div>
-              <a
-                href="#kontakt"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.querySelector("#kontakt")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="block w-full text-center bg-leaf-500 hover:bg-leaf-400 text-white font-semibold font-body text-xs py-2.5 rounded-xl transition-colors cursor-pointer"
+          {/* Nav */}
+          <nav className="flex gap-6 flex-wrap">
+            {LINKS.map((l) => (
+              <button
+                key={l.href}
+                onClick={() => go(l.href)}
+                className="text-[rgba(240,237,230,.35)] hover:text-[#4a9e70] text-[13px] transition-colors cursor-none"
               >
-                Kontaktovať →
-              </a>
-            </div>
+                {l.label}
+              </button>
+            ))}
+          </nav>
+
+          {/* Contacts */}
+          <div className="flex items-center gap-5">
+            <a href="tel:+421900000000" className="flex items-center gap-1.5 text-[rgba(240,237,230,.3)] hover:text-[#4a9e70] text-[13px] transition-colors cursor-none">
+              <Phone className="w-3.5 h-3.5" /> +421 900 000 000
+            </a>
+            <a href="mailto:info@vitagarden.sk" className="flex items-center gap-1.5 text-[rgba(240,237,230,.3)] hover:text-[#4a9e70] text-[13px] transition-colors cursor-none">
+              <Mail className="w-3.5 h-3.5" /> info@vitagarden.sk
+            </a>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="border-t border-white/8 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="font-body text-cream-600 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[rgba(240,237,230,.2)] text-[12px]">
             © {year} VitaGarden. Všetky práva vyhradené.
           </p>
           <div className="flex gap-5">
-            <button className="font-body text-cream-600 hover:text-cream-400 text-xs transition-colors cursor-pointer">
-              Ochrana osobných údajov
-            </button>
-            <button className="font-body text-cream-600 hover:text-cream-400 text-xs transition-colors cursor-pointer">
-              Podmienky použitia
-            </button>
+            <button className="text-[rgba(240,237,230,.2)] hover:text-[rgba(240,237,230,.4)] text-[12px] transition-colors cursor-none">Ochrana údajov</button>
+            <button className="text-[rgba(240,237,230,.2)] hover:text-[rgba(240,237,230,.4)] text-[12px] transition-colors cursor-none">Podmienky</button>
           </div>
         </div>
       </div>
